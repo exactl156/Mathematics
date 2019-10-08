@@ -13,7 +13,7 @@ import java.util.Arrays;
  * 3. Having a Determinent Value
  * 4. Having a gaussian Matrix
  * 5. multiplying this matrix with another Matrix
- * 6. multiplying this matrix with another Matrix
+ * 6. adding this matrix with another Matrix
  * */
 public class Matrix {
 	int MatrixRows;
@@ -100,7 +100,7 @@ public class Matrix {
 
 
 	/*
-	 * this method is aimed at finding out the value of the determinent. it does so 
+	 * this method is aimed at finding out the value of the determinant. it does so 
 	 * inefficiently by calculating cofactors and using recursion. A faster method would be to use 
 	 * gaussian elimination before multiplying the diagonal. It also returns a double answer for the 
 	 * determinent of the matrix. If the matrix does not have a determinent it will return a -1 and a 
@@ -128,7 +128,29 @@ public class Matrix {
 		}
 		return sum;
 	}
-
+	
+	
+	/*
+	 * 1. The purpose of the method is to calculate the determinant using the gauassian reduced matrix
+	 * 2. It does so by multiplying row values of the diagonal
+	 * 3. The function returns the double value of the determinent.
+	 * 
+	 * */
+	public double Determinent2() throws NumberFormatException, IOException 
+	{
+		if(MatrixRows!=MatrixCols) 
+		{
+			System.out.print("determinent not available");
+			return -1;
+		}
+		double det=1;
+		Matrix rowreduced=this.GaussianEliminate();
+		for(int i=0;i<MatrixRows;i++) 
+		{
+			det*=rowreduced.MatrixValues[i][i];
+		}
+		return det;
+	}
 
 	/*
 	 * the purpose of this method is to obtain the cofactor of a certain element. it is used in the 
@@ -189,7 +211,7 @@ public class Matrix {
 			Elimination.printMatrix();*/
 		}
 		Elimination.printMatrix();
-		return null;
+		return Elimination;
 	}
 
 
@@ -250,7 +272,7 @@ public class Matrix {
 				}
 			}	
 		}
-		System.out.println(Arrays.toString(pivots));
+	//	System.out.println(Arrays.toString(pivots));
 		return pivots;
 	}
 
@@ -330,11 +352,16 @@ public class Matrix {
 			}
 		}
 		CofatorMatrix.transferMatrix(CofactorDeterminentValues);
+System.out.print("matrix oc cofactors\n");
 		CofatorMatrix.printMatrix();
 		return CofatorMatrix;
 	}
 	
-	
+	/*
+	 * 1. this method simply adds together matrixes.
+	 * 2. it does so by iterating through both matrixes with a for loop and forming another array to 
+	 * store as a matrix
+	 * 3. This method returns another matrix*/
 	public Matrix Addition(Matrix otherMatrix) throws NumberFormatException, IOException 
 	{
 		Matrix sum = new Matrix();
@@ -351,6 +378,12 @@ public class Matrix {
 	}
 
 
+	/*
+	 * 1. this method simply multiplies together matrixes AB. where A is
+	 * 2. it does so by iterating through both matrixes with three for loops and forming another array to 
+	 * store as a matrix. Two for loops are for traversing through row of first matrix and column of other. 
+	 * the third is for loop is for multiplying the column by row.
+	 * 3. This method returns another matrix*/
 	public Matrix multiply(Matrix otherMatrix) throws NumberFormatException, IOException 
 	{
 		Matrix mult = new Matrix();
@@ -368,5 +401,43 @@ public class Matrix {
 		}
 		mult.transferMatrix(multValues);
 		return mult;
+	}
+	
+	
+	/*
+	 * 1. this method simply scales the current matrix by a factor x.
+	 * 2. it does so by iterating through the matrixes with a for loop and forming another array with scaled 
+	 * values to store as a matrix
+	 * 3. This method returns another matrix*/
+	public Matrix scale(double d) throws NumberFormatException, IOException 
+	{
+		Matrix sum = new Matrix();
+		double[][] sumValues=new double[MatrixRows][MatrixCols];
+		for(int i=0;i<MatrixRows;i++) 
+		{
+			for(int j=0;j<MatrixCols;j++) 
+			{
+				sumValues[i][j]=MatrixValues[i][j]*d;
+			}
+		}
+		sum.transferMatrix(sumValues);
+		return sum;
+	}
+	
+	
+	/*
+	 * 1. this method calculates the inverse of a matrix
+	 * 2. It does so by finding the matrix of cofactors, transposing it and scaling by a factor of 1/det
+	 * of the matrix
+	 * 3. It return the inverse of the matrix
+	 * 
+	 * */
+	public Matrix inverse() throws NumberFormatException, IOException 
+	{
+		Matrix Inverse= new Matrix();
+		Inverse=this.MatrixOfCofactors().Transpose().scale(1/this.Determinent());
+		System.out.print("The inverse is\n");
+		Inverse.printMatrix();
+		return Inverse;
 	}
 }
