@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Scanner;
 
 
 /*
@@ -12,13 +13,15 @@ import java.util.Arrays;
  * 2. Printing Matrix
  * 3. Having a Determinent Value
  * 4. Having a gaussian Matrix
- * 5. multiplying this matrix with another Matrix
- * 6. adding this matrix with another Matrix
+ * 5. Multiplying this matrix with another Matrix
+ * 6. Adding this matrix with another Matrix
+ * 7. Scaling the matrix
+ * 8. Having an inverse
  * */
 public class Matrix {
-	int MatrixRows;
-	int MatrixCols;
-	double[][] MatrixValues;
+protected	int MatrixRows;
+protected	int MatrixCols;
+protected	double[][] MatrixValues;
 
 
 	public Matrix() throws NumberFormatException, IOException {
@@ -28,24 +31,23 @@ public class Matrix {
 
 
 	/*
-	 *This method does 3 things. 
-	 * Firstly it obtains the number of rows
-	 * Secondly it obtains number of columns
-	 * Thirdly it obtains matrix values
+	 * 1.This method does 3 things. 
+	 * 		Firstly it obtains the number of rows
+	 * 		Secondly it obtains number of columns
+	 * 		Thirdly it obtains matrix values
 	 * Primarily this method is aimed at getting information from user
-	 * 
+	 * 2. This method does so by intially asking for a value of rows. After recieving the value, it asks for
+	 * a number of columns. After recieving those two numbers, it recieves the matrix value by using a for 
+	 * loop to recieve the number of values inputted
 	 * */
 	public void getInfo() throws NumberFormatException, IOException 
 	{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print("eneter # of rows:\n");
-		MatrixRows=Integer.parseInt(br.readLine());
-		System.out.print("eneter # of cols:\n");
-		MatrixCols=Integer.parseInt(br.readLine());
-
-
+		System.out.print("\neneter # of rows:\n");
+		MatrixRows=getIntegerNumberFromUser(br);
+		System.out.print("\neneter # of cols:\n");
+		MatrixCols=getIntegerNumberFromUser(br);
 		MatrixValues= new double[MatrixRows][MatrixCols];
-
 		System.out.print("eneter values:\n");
 		for(int i=0;i<MatrixRows;i++) 
 		{
@@ -57,33 +59,63 @@ public class Matrix {
 				MatrixValues[i][j]=Double.parseDouble(input[j]);
 			}
 		}
-		//printMatrix();
-		//double[][] newValues= {{2,2},{2,2}};
-		//transferMatrix(newValues);
-		//printMatrix();
-		//	System.out.print(MatrixRows*MatrixCols);
+
+
 	}
 
 
 	/*
-	 * This method is another method of transfering information to this matrix object. it does so by explicitly
-	 * passing in an array. Primarily it is aimed at communication between objects already in system. Its 
-	 * particularily useful in transfering to matrix already exist without changing data already here.
-	 * 
+	 * 1. the purpose of this method is to get numeric Integer input from the user.
+	 * 2. the method does so by using a try catch block if user enters an illegal value it continues till
+	 * it returns a Integer value
+	 * 3. it returns the Integer value a user has entered.
+	 * */
+	public int getIntegerNumberFromUser(BufferedReader in) 
+	{
+		while (true) { // we end the loop by a return, not by a condition.
+			try 
+			{
+				return Integer.parseInt(in.readLine());
+			} catch (IOException ex) 
+			{
+				System.err.println("could not acquire next line from system input: " + ex.getMessage());
+			} catch (NumberFormatException ex) 
+			{
+				System.err.println("could not convert input string: " + ex.getMessage());
+			}
+		}
+	}
+
+
+	/*
+	 * 1. This method is another method of transferring information to this matrix object. Primarily it is 
+	 * aimed at communication between objects already in system. Its particularily useful in transfering 
+	 * to matrix already exist without changing data already here.
+	 * 2.it does so by explicitly passing in an array. 
+	 * 3. it returns nothing
 	 * 
 	 * */
 	public void transferMatrix(double[][] newValues)  
 	{
-		MatrixValues=newValues;
+
 		MatrixCols=newValues[0].length;
 		MatrixRows=newValues.length;
+		MatrixValues=new double[MatrixRows][MatrixCols];
+		for(int i=0;i<MatrixRows;i++) 
+		{
+			for(int j=0;j<MatrixCols;j++) 
+			{
+				MatrixValues[i][j]=newValues[i][j];
+			}
+		}
 	}
 
 
 	/*
-	 * This method does one thing. It goes through the Matrix Values matrix and prints the values as the matrix is 
+	 * 1.This method does one thing. It goes through the Matrix Values matrix and prints the values as the matrix is 
 	 * stored as.
-	 * 
+	 * 2. It does so by using a double for loop to access all the values in the array
+	 * 3. It returns nothing
 	 * 
 	 * */
 	public void printMatrix()
@@ -100,12 +132,11 @@ public class Matrix {
 
 
 	/*
-	 * this method is aimed at finding out the value of the determinant. it does so 
-	 * inefficiently by calculating cofactors and using recursion. A faster method would be to use 
-	 * gaussian elimination before multiplying the diagonal. It also returns a double answer for the 
-	 * determinent of the matrix. If the matrix does not have a determinent it will return a -1 and a 
-	 * statement that this matrix doesn't have a matrix.
-	 * 
+	 * 1.this method is aimed at finding out the value of the determinant. 
+	 * 2.it does so inefficiently by calculating cofactors and using recursion. A faster method would be 
+	 * to use gaussian elimination before multiplying the diagonal. 
+	 * 3. It also returns a double answer for the determinent of the matrix. If the matrix does not have 
+	 * a determinent it will return a -1 and a statement that this matrix doesn't have a matrix.
 	 * 
 	 * */
 	public double Determinent() throws NumberFormatException, IOException 
@@ -128,8 +159,8 @@ public class Matrix {
 		}
 		return sum;
 	}
-	
-	
+
+
 	/*
 	 * 1. The purpose of the method is to calculate the determinant using the gauassian reduced matrix
 	 * 2. It does so by multiplying row values of the diagonal
@@ -152,8 +183,9 @@ public class Matrix {
 		return det;
 	}
 
+
 	/*
-	 * the purpose of this method is to obtain the cofactor of a certain element. it is used in the 
+	 * 1.the purpose of this method is to obtain the cofactor of a certain element. it is used in the 
 	 * current version of the determinent for calculations
 	 * 
 	 * 
@@ -190,10 +222,17 @@ public class Matrix {
 
 	/*
 	 * 1. This method is for finding the Reduced row Echolon form of a matrix
+	 * 2. it does so by first creating a copy from the transfer matrix method above. It then uses a for loop
+	 * on the rows of the matrix to make sure that it obatins maximum number of pivots possible. In the for
+	 * loop it reorders the rows using the reorder method to make sure its first element is nonzero. It then
+	 * obtains the current nonzero positions in each row by using pivots. It then goes through a second
+	 * for loop where it subtracts all the rows below it. It repeats the process for each row.
+	 * 3. It returns a matrix in a echlon form
 	 * */
 	public Matrix GaussianEliminate() throws NumberFormatException, IOException 
 	{
 		Matrix Elimination = new Matrix();
+
 		Elimination.transferMatrix(MatrixValues);
 		int[] pivots;
 		for(int i=0;i<MatrixRows;i++ ) 
@@ -210,7 +249,7 @@ public class Matrix {
 			/*System.out.print("iteration"+i+"\n");
 			Elimination.printMatrix();*/
 		}
-		Elimination.printMatrix();
+		//Elimination.printMatrix();
 		return Elimination;
 	}
 
@@ -272,7 +311,7 @@ public class Matrix {
 				}
 			}	
 		}
-	//	System.out.println(Arrays.toString(pivots));
+		//	System.out.println(Arrays.toString(pivots));
 		return pivots;
 	}
 
@@ -285,12 +324,15 @@ public class Matrix {
 	 * 3. The method returns void as it only modifies values inside of corresponding matrix.
 	 * 
 	 * */
-	public void subtractRowBfromA(int A,int B,double timesA,double timesB) 
+	public void subtractRowBfromA(int A,int B,double timesA,double timesB) throws NumberFormatException, IOException 
 	{
+		/*Matrix Subtract=new Matrix();
+		Subtract.transferMatrix(MatrixValues);*/
 		for(int i=0;i<MatrixCols;i++) 
 		{
 			MatrixValues[A][i]=timesA*MatrixValues[A][i]-timesB*MatrixValues[B][i];
 		}
+		//return Subtract;
 	}
 
 
@@ -316,6 +358,7 @@ public class Matrix {
 	 * 2. It does so by literally running through a for loop that adds the correponding matrix 
 	 * into existence
 	 * 3. Its return type is a Matrix
+	 * 
 	 * */
 	public Matrix Transpose() throws NumberFormatException, IOException 
 	{
@@ -329,7 +372,7 @@ public class Matrix {
 			}
 		}
 		tr.transferMatrix(transposeArray);
-		tr.printMatrix();
+		//tr.printMatrix();
 		return tr;
 	}
 
@@ -339,6 +382,7 @@ public class Matrix {
 	 * 2. It does so by going through each element and using obtainCofactor method in conjunction with
 	 * the determinent method to calculate each element of the cofactor matrix.
 	 * 3. Its return type is a matrix
+	 *  
 	 *  */
 	public Matrix MatrixOfCofactors() throws NumberFormatException, IOException 
 	{
@@ -352,29 +396,40 @@ public class Matrix {
 			}
 		}
 		CofatorMatrix.transferMatrix(CofactorDeterminentValues);
-System.out.print("matrix oc cofactors\n");
-		CofatorMatrix.printMatrix();
+		/*System.out.print("matrix oc cofactors\n");
+		CofatorMatrix.printMatrix();*/
 		return CofatorMatrix;
 	}
-	
+
 	/*
 	 * 1. this method simply adds together matrixes.
 	 * 2. it does so by iterating through both matrixes with a for loop and forming another array to 
 	 * store as a matrix
-	 * 3. This method returns another matrix*/
+	 * 3. This method returns another matrix
+	 * 
+	 * */
 	public Matrix Addition(Matrix otherMatrix) throws NumberFormatException, IOException 
 	{
-		Matrix sum = new Matrix();
-		double[][] sumValues=new double[MatrixRows][MatrixCols];
-		for(int i=0;i<MatrixRows;i++) 
+		if(MatrixRows==otherMatrix.MatrixRows&&MatrixCols==otherMatrix.MatrixCols) 
 		{
-			for(int j=0;j<MatrixCols;j++) 
+			Matrix sum = new Matrix();
+			double[][] sumValues=new double[MatrixRows][MatrixCols];
+			for(int i=0;i<MatrixRows;i++) 
 			{
-				sumValues[i][j]=MatrixValues[i][j]+otherMatrix.MatrixValues[i][j];
+				for(int j=0;j<MatrixCols;j++) 
+				{
+					sumValues[i][j]=MatrixValues[i][j]+otherMatrix.MatrixValues[i][j];
+				}
 			}
+			sum.transferMatrix(sumValues);
+			return sum;
 		}
-		sum.transferMatrix(sumValues);
-		return sum;
+		else 
+		{
+			System.out.print("This method is not applicable to the input matrix because the dimensions don't match. "
+					+ "As a result we are returning the null matrix.");
+			return null;
+		}
 	}
 
 
@@ -386,24 +441,33 @@ System.out.print("matrix oc cofactors\n");
 	 * 3. This method returns another matrix*/
 	public Matrix multiply(Matrix otherMatrix) throws NumberFormatException, IOException 
 	{
-		Matrix mult = new Matrix();
-		double[][] multValues=new double[MatrixRows][otherMatrix.MatrixCols];
-		for(int i=0;i<MatrixRows;i++) 
+		if(MatrixCols==otherMatrix.MatrixRows) 
 		{
-			for(int j=0;j<otherMatrix.MatrixCols;j++) 
+			Matrix mult = new Matrix();
+			double[][] multValues=new double[MatrixRows][otherMatrix.MatrixCols];
+			for(int i=0;i<MatrixRows;i++) 
 			{
-				multValues[i][j]=0;
-				for(int k=0;k<MatrixCols;k++) 
+				for(int j=0;j<otherMatrix.MatrixCols;j++) 
 				{
-					multValues[i][j]+=MatrixValues[i][k]*otherMatrix.MatrixValues[k][j];
+					multValues[i][j]=0;
+					for(int k=0;k<MatrixCols;k++) 
+					{
+						multValues[i][j]+=MatrixValues[i][k]*otherMatrix.MatrixValues[k][j];
+					}
 				}
 			}
+			mult.transferMatrix(multValues);
+			return mult;
 		}
-		mult.transferMatrix(multValues);
-		return mult;
+		else 
+		{
+			System.out.print("This method is not applicable to the input matrix because the dimensions don't match. "
+					+ "As a result we are returning the null matrix.");
+			return null;
+		}
 	}
-	
-	
+
+
 	/*
 	 * 1. this method simply scales the current matrix by a factor x.
 	 * 2. it does so by iterating through the matrixes with a for loop and forming another array with scaled 
@@ -423,8 +487,8 @@ System.out.print("matrix oc cofactors\n");
 		sum.transferMatrix(sumValues);
 		return sum;
 	}
-	
-	
+
+
 	/*
 	 * 1. this method calculates the inverse of a matrix
 	 * 2. It does so by finding the matrix of cofactors, transposing it and scaling by a factor of 1/det
@@ -434,10 +498,36 @@ System.out.print("matrix oc cofactors\n");
 	 * */
 	public Matrix inverse() throws NumberFormatException, IOException 
 	{
-		Matrix Inverse= new Matrix();
-		Inverse=this.MatrixOfCofactors().Transpose().scale(1/this.Determinent());
-		System.out.print("The inverse is\n");
-		Inverse.printMatrix();
-		return Inverse;
+		if(MatrixCols==MatrixRows) 
+		{
+			Matrix Inverse= new Matrix();
+			Inverse=this.MatrixOfCofactors().Transpose().scale(1/this.Determinent());
+			System.out.print("The inverse is\n");
+			return Inverse;
+		}
+		else 
+		{
+			System.out.print("This method is not applicable to the input matrix because the dimensions don't match. "
+					+ "As a result we are returning the null matrix.");
+			return null;
+		}
+
+	}
+
+	/*
+	 * 1.This method calculates the rounded matrix of the current matrix values
+	 * 2. It does so by first multiply each number by a 1000 and then rounding using Math .round.
+	 * It then retrieves the previous 3 digits by dividing by 1000
+	 * 3. It does not return anything. 
+	 * */
+	public void RoundMatrix() 
+	{
+		for(int i=0;i<MatrixRows;i++) 
+		{
+			for(int j=0;j<MatrixCols;j++) 
+			{
+				MatrixValues[i][j]=Math.round(MatrixValues[i][j]*1000)/1000;
+			}
+		}
 	}
 }

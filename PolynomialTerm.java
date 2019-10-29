@@ -25,11 +25,17 @@ public class PolynomialTerm {
 	 * 1.This method simply aims to print out the polynomial in this object
 	 * 2. It does so by printing coeficient+variable+"^"+exponent using the system
 	 * 3. It returns nothing
-	 * 
 	 * */
 	public void PrintPolynomialTerm() 
 	{
-		System.out.print(coeficient+variable+"^"+exponent);
+		if(exponent>0) 
+		{
+			System.out.print("("+coeficient+variable+"^"+exponent+")");
+		}
+		else 
+		{
+			System.out.print("("+coeficient+")");
+		}
 	}
 	
 	
@@ -53,5 +59,46 @@ public class PolynomialTerm {
 	public PolynomialTerm AddPolynomialTerm(PolynomialTerm another) 
 	{
 		return new PolynomialTerm(coeficient+another.coeficient,variable,exponent);
+	}
+	
+	
+	/*
+	 * 1. This method returns the derivative of a polynomial term
+	 * 2. It does so by returning a polynoimal with coeficient multiplied by exponent in coeficient place of 
+	 * intialization and a decrement of 1 in exponent
+	 * 3. It returns a new term thats the derivative of the term.
+	 * */
+	public PolynomialTerm DerivateOfTerm() 
+	{
+		if(exponent>0) 
+		{
+			return new PolynomialTerm(coeficient*exponent,variable,exponent-1);
+		}
+		else 
+		{
+			return new PolynomialTerm(0,variable,0);
+		}
+	}
+	
+	/*
+	 * 1. This method evaluates the function at a point specfied by the input
+	 * 2. For now the method does so by multiplying the coeficient with the Math.power version of point
+	 * to the exponent value.
+	 * 3. this method returns the value of a double at a point pt
+	 * */
+	public double ValueOfPolynomialAt(double pt) 
+	{
+		return coeficient*Math.pow(pt, exponent);
+	}
+	
+	
+	/*
+	 * 1. this method returns the integral of the term
+	 * 2. it does so by incrementing the exponent and divinding the coeficient by exponent+1
+	 * 3. It returns a polynomial term
+	 * */
+	public PolynomialTerm IntegralOfTerm() 
+	{
+			return new PolynomialTerm(coeficient/(exponent+1),variable,exponent+1);
 	}
 }
